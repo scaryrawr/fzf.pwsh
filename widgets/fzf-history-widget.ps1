@@ -1,0 +1,23 @@
+# PowerShell port of fzf-history-widget.zsh
+
+function Invoke-FzfHistoryWidget {
+  # Get current command line
+  $line = $null
+  $cursor = $null
+  [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+  # Use PSReadLine's history as a source
+  $history = Get-Content (Get-PSReadLineOption).HistorySavePath -ErrorAction SilentlyContinue
+
+  # Use the current line as the query
+  $query = $line
+
+  # Run fzf to select command from history
+  $selectedCommand = $history | fzf --tac --height 60% --query="$query"
+
+  # If a command was selected, replace the current line with it
+  if ($selectedCommand) {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert($selectedCommand)
+  }
+}
