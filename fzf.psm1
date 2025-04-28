@@ -8,16 +8,26 @@ $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $env:FZF_DEFAULT_OPTS ??= "--ansi"
 
 # Initialize preview command variables
-$env:FZF_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_preview.ps1")"
-$env:FZF_GIT_BLAME_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_blame_preview.ps1")"
-$env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_commit_preview.ps1")"
-$env:FZF_GIT_LOG_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_log_preview.ps1")"
-$env:FZF_GIT_STATUS_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_status_preview.ps1")"
+
+if (Get-Command "python" -ErrorAction SilentlyContinue) {
+  $env:FZF_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_preview.py")"
+  $env:FZF_GIT_BLAME_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_blame_preview.py")"
+  $env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_commit_preview.py")"
+  $env:FZF_GIT_LOG_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_commit_preview.py")"
+  $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_status_preview.py")"
+}
+else {
+  $env:FZF_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_preview.ps1")"
+  $env:FZF_GIT_BLAME_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_blame_preview.ps1")"
+  $env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_commit_preview.ps1")"
+  $env:FZF_GIT_LOG_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_log_preview.ps1")"
+  $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_status_preview.ps1")"
+}
 #$env:FZF_PACKAGE_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_package_preview.ps1")"
 
 # Set up diff preview command with delta if available
 if (Get-Command "delta" -ErrorAction SilentlyContinue) {
-  $env:FZF_DIFF_PREVIEW_CMD ??= "delta --paging=never"
+  $env:FZF_DIFF_PREVIEW_CMD ??= "delta --paging never"
 }
 
 # Source all widget functions

@@ -15,6 +15,7 @@ A PowerShell module that integrates [fzf](https://github.com/junegunn/fzf) (comm
 - [eza](https://github.com/eza-community/eza) or [exa](https://github.com/ogham/exa) - Modern replacement for `ls`
 - [delta](https://github.com/dandavison/delta) - Syntax-highlighting pager for git
 - [chafa](https://github.com/hpjansson/chafa) - Terminal graphics for image previews
+- [python](https://www.python.org/) - Improve performance of previews
 
 ## Installation
 

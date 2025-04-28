@@ -37,10 +37,9 @@ function Invoke-FzfGitBlameWidget {
     $selectedBlame = $gitBlame | fzf --height 60% --preview="$env:FZF_GIT_COMMIT_PREVIEW_CMD {1}"
 
     # If a blame line was selected, extract the commit hash
-    if ($selectedBlame -match "^(\d+):.* - (.*)$") {
-        $lineNum = $matches[1]
-        $summary = $matches[2]
+    if ($selectedBlame) {
         # Insert the commit line number
-        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("${filePath}:${lineNum}")
+        $selectedBlame = $selectedBlame -split '\s+' | Select-Object -First 1
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("${selectedBlame}")
     }
 }
