@@ -10,4 +10,9 @@ if (-not $filePath) {
     exit 1
 }
 
-git blame --abbrev=8 "$filePath"
+if ($env:FZF_DIFF_PREVIEW_CMD) {
+    git blame "$filePath" | Invoke-Expression $env:FZF_DIFF_PREVIEW_CMD
+}
+else {
+    git blame --abbrev=8 "$filePath"
+}

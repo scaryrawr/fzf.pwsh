@@ -11,5 +11,9 @@ if (-not $commit) {
 }
 
 # Show the commit details with diff
-Write-Output "$commit"
-git show --color=always $commit
+if ($env:FZF_DIFF_PREVIEW_CMD) {
+    git show --color=always $commit | Invoke-Expression $env:FZF_DIFF_PREVIEW_CMD
+}
+else {
+    git show --color=always $commit
+}
