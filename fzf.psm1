@@ -16,6 +16,13 @@ if (Get-Command "python" -ErrorAction SilentlyContinue) {
   $env:FZF_GIT_LOG_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_commit_preview.py")"
   $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_status_preview.py")"
 }
+elseif (Get-Command "python3" -ErrorAction SilentlyContinue) {
+  $env:FZF_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR "previewers\python\fzf_preview.py")"
+  $env:FZF_GIT_BLAME_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_blame_preview.py")"
+  $env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_commit_preview.py")"
+  $env:FZF_GIT_LOG_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_commit_preview.py")"
+  $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR "previewers\python\fzf_git_status_preview.py")"
+}
 else {
   $env:FZF_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_preview.ps1")"
   $env:FZF_GIT_BLAME_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_git_blame_preview.ps1")"
