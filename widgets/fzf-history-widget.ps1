@@ -16,8 +16,13 @@ function Invoke-FzfHistoryWidget {
   $selectedCommand = $history | fzf --tac --height 60% --query="$query"
 
   # If a command was selected, replace the current line with it
+  [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+  [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+
   if ($selectedCommand) {
-    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert($selectedCommand)
+  }
+  else {
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert($line)
   }
 }

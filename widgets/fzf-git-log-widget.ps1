@@ -26,4 +26,6 @@ function Invoke-FzfGitLogWidget {
         
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert($commitHash)
   }
+  
+  [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }

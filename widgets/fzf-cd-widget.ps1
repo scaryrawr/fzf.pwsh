@@ -21,4 +21,6 @@ function Invoke-FzfCdWidget {
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd '$($selectedDir.Trim())'")
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
   }
+
+  [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }

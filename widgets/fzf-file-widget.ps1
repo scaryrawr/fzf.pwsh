@@ -62,4 +62,6 @@ function Invoke-FzfFileWidget {
       [Microsoft.PowerShell.PSConsoleReadLine]::Insert($newText)
     }
   }
+
+  [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
