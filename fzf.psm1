@@ -84,29 +84,31 @@ function Set-PsFzfKeyBindings {
   
   # Set key bindings - matching the original fzf.zsh bindings
   # File widget (^T)
-  Set-PsFzfShortcut -Key 'Ctrl+t' -ScriptBlock ${function:Invoke-FzfFileWidget} -Description 'FZF file search'
+  Set-PsFzfShortcut -Key 'Ctrl+t' -ScriptBlock { Invoke-FzfFileWidget } -Description 'FZF file search'
   
-  # History widget (^R, Up Arrow)
-  Set-PsFzfShortcut -Key 'Ctrl+r' -ScriptBlock ${function:Invoke-FzfHistoryWidget} -Description 'FZF history search'
-  Set-PsFzfShortcut -Key 'UpArrow' -ScriptBlock ${function:Invoke-FzfHistoryWidget} -Description 'FZF history search'
+  # History widgets (^R for reverse search, ^S for forward search)
+  Set-PsFzfShortcut -Key 'Ctrl+r' -ScriptBlock { Invoke-FzfHistoryWidget } -Description 'FZF history reverse search'
+  Set-PsFzfShortcut -Key 'UpArrow' -ScriptBlock { Invoke-FzfHistoryWidget } -Description 'FZF history search'
+  Set-PsFzfShortcut -Key 'Ctrl+s' -ScriptBlock { Invoke-FzfHistoryWidget -ForwardSearch } -Description 'FZF history forward search'
+  Set-PsFzfShortcut -Key 'DownArrow' -ScriptBlock { Invoke-FzfHistoryWidget -ForwardSearch } -Description 'FZF history forward search'
   
   # CD widget (Alt+c)
-  Set-PsFzfShortcut -Key 'Alt+c' -ScriptBlock ${function:Invoke-FzfCdWidget} -Description 'FZF change directory'
+  Set-PsFzfShortcut -Key 'Alt+c' -ScriptBlock { Invoke-FzfCdWidget } -Description 'FZF change directory'
   
   # Git log widget (Alt+g)
-  Set-PsFzfShortcut -Key 'Alt+g' -ScriptBlock ${function:Invoke-FzfGitLogWidget} -Description 'FZF git log'
+  Set-PsFzfShortcut -Key 'Alt+g' -ScriptBlock { Invoke-FzfGitLogWidget } -Description 'FZF git log'
   
   # Git status widget (Alt+s)
-  Set-PsFzfShortcut -Key 'Alt+s' -ScriptBlock ${function:Invoke-FzfGitStatusWidget} -Description 'FZF git status'
+  Set-PsFzfShortcut -Key 'Alt+s' -ScriptBlock { Invoke-FzfGitStatusWidget } -Description 'FZF git status'
   
   # Variables widget (Alt+V)
-  Set-PsFzfShortcut -Key 'Alt+v' -ScriptBlock ${function:Invoke-FzfVariablesWidget} -Description 'FZF environment variables'
+  Set-PsFzfShortcut -Key 'Alt+v' -ScriptBlock { Invoke-FzfVariablesWidget } -Description 'FZF environment variables'
   
   # Package widget (Alt+Ctrl+P)
-  #Set-PsFzfShortcut -Key "Alt+Ctrl+p" -ScriptBlock ${function:Invoke-FzfPackageWidget} -Description "FZF package search"
+  #Set-PsFzfShortcut -Key "Alt+Ctrl+p" -ScriptBlock {Invoke-FzfPackageWidget} -Description "FZF package search"
   
   # Git blame widget (Alt+b)
-  Set-PsFzfShortcut -Key 'Alt+b' -ScriptBlock ${function:Invoke-FzfGitBlameWidget} -Description 'FZF git blame'
+  #Set-PsFzfShortcut -Key 'Alt+b' -ScriptBlock {Invoke-FzfGitBlameWidget} -Description 'FZF git blame'
 }
 
 # Export the key binding function and all the widget functions
