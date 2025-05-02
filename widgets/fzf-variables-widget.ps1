@@ -1,6 +1,9 @@
 # PowerShell port of fzf-variables-widget.zsh
 
 function Invoke-FzfVariablesWidget {
+  [CmdletBinding()]
+  param()
+  
   # Get current command line
   $line = $null
   $cursor = $null

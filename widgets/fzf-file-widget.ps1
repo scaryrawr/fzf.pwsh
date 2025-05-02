@@ -2,40 +2,43 @@
 
 function Find-FzfFiles {
   # Try to use fd if available
-  if (Get-Command "fd" -ErrorAction SilentlyContinue) {
+  if (Get-Command 'fd' -ErrorAction SilentlyContinue) {
     fd --type file --color=always
   }
   else {
     # Fall back to PowerShell
-    if (Test-Path -Path ".git") {
+    if (Test-Path -Path '.git') {
       # If in a git repo, exclude git ignored files
       try {
         $gitFiles = (git ls-files --others --ignored --exclude-standard --directory) -join "`n"
         Get-ChildItem -File -Recurse -Force | Where-Object {
           $_.FullName -notmatch '\.git\\' -and
           $gitFiles -notcontains $_.FullName
-        } | ForEach-Object { $_.FullName.Replace("$pwd\", "") }
+        } | ForEach-Object { $_.FullName.Replace("$pwd\", '') }
       }
       catch {
         Get-ChildItem -File -Recurse -Force | Where-Object { $_.FullName -notmatch '\.git\\' } | 
-        ForEach-Object { $_.FullName.Replace("$pwd\", "") }
+        ForEach-Object { $_.FullName.Replace("$pwd\", '') }
       }
     }
     else {
       # Not in git repo, just get all files
       Get-ChildItem -File -Recurse -Force | Where-Object { $_.FullName -notmatch '\.git\\' } | 
-      ForEach-Object { $_.FullName.Replace("$pwd\", "") }
+      ForEach-Object { $_.FullName.Replace("$pwd\", '') }
     }
   }
 }
 
 function Invoke-FzfFileWidget {
+  [CmdletBinding()]
+  param()
+  
   # Get current command line and cursor position
   $line = $null
   $cursor = $null
   [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
   # Extract hint from cursor position if there's any word at cursor
-  $hint = ""
+  $hint = ''
   if ($cursor -gt 0) {
     # Define word delimiters manually instead of using TokenizerHelper
     $wordDelimiters = " `t`n`r,;{}()[]'\`" | &><"
@@ -54,11 +57,11 @@ function Invoke-FzfFileWidget {
   if ($selectedFiles) {
     if ($hint) {
       $replacementPoint = $cursor - $hint.Length
-      $newText = ($selectedFiles -replace "`r`n", " ").TrimEnd()
+      $newText = ($selectedFiles -replace "`r`n", ' ').TrimEnd()
       [Microsoft.PowerShell.PSConsoleReadLine]::Replace($replacementPoint, $hint.Length, $newText)
     }
     else {
-      $newText = ($selectedFiles -replace "`r`n", " ").TrimEnd()
+      $newText = ($selectedFiles -replace "`r`n", ' ').TrimEnd()
       [Microsoft.PowerShell.PSConsoleReadLine]::Insert($newText)
     }
   }

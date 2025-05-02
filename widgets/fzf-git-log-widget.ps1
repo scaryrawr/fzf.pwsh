@@ -1,10 +1,13 @@
 # PowerShell port of fzf-git-log-widget.zsh
 
 function Invoke-FzfGitLogWidget {
+  [CmdletBinding()]
+  param()
+
   # Check if in a git repository
-  if (-not (Test-Path -Path ".git")) {
+  if (-not (Test-Path -Path '.git')) {
     [Microsoft.PowerShell.PSConsoleReadLine]::Ding()
-    Write-Host "`nNot in a git repository" -ForegroundColor Red
+    Write-Verbose "`nNot in a git repository"
     return
   }
 

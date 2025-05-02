@@ -1,6 +1,7 @@
 # PowerShell port of fzf-history-widget.zsh
 
 function Invoke-FzfHistoryWidget {
+  [CmdletBinding()]
   param(
     [switch]$ForwardSearch
   )

@@ -1,14 +1,17 @@
 # PowerShell port of fzf-cd-widget.zsh
 
 function Invoke-FzfCdWidget {
+  [CmdletBinding()]
+  param()
+  
   # Function to find directories
   function Find-Directories {
-    if (Get-Command "fd" -ErrorAction SilentlyContinue) {
+    if (Get-Command 'fd' -ErrorAction SilentlyContinue) {
       fd --type directory --color=always
     }
     else {
       Get-ChildItem -Directory -Recurse -Force | Where-Object { $_.FullName -notmatch '\.git\\' } | 
-      ForEach-Object { $_.FullName.Replace("$pwd\", "") }
+      ForEach-Object { $_.FullName.Replace("$pwd\", '') }
     }
   }
 

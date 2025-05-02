@@ -67,6 +67,30 @@ $env:FZF_PACKAGE_PREVIEW_CMD = "<custom-package-preview-command>"
 $env:FZF_DIFF_PREVIEW_CMD = "<custom-diff-preview-command>"
 ```
 
+## Verbose Output
+
+The module supports PowerShell's standard `-Verbose` parameter for diagnostics. You can enable verbose output in two ways:
+
+1. For a single command invocation, use the `-Verbose` parameter:
+
+   ```powershell
+   Invoke-FzfGitStatusWidget -Verbose
+   ```
+
+2. For the entire session, set the `$VerbosePreference` variable:
+
+   ```powershell
+   $VerbosePreference = "Continue"
+   ```
+
+3. When importing the module (affects all commands from this module):
+
+   ```powershell
+   Import-Module fzf.pwsh -Verbose
+   ```
+
+When verbose mode is enabled, the widget functions will display additional information, such as notifications about not being in a git repository or when there are no changes in a git repository. When verbose mode is disabled (the default), these notifications will not appear, keeping your prompt clean.
+
 ## Credits
 
 This is a PowerShell port of the [fzf.zsh](https://github.com/scaryrawr/fzf.zsh) plugin mostly done by GitHub Copilot.
