@@ -15,6 +15,7 @@ if (Get-Command 'python' -ErrorAction SilentlyContinue) {
   $env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_git_commit_preview.py')"
   $env:FZF_GIT_LOG_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_git_commit_preview.py')"
   $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_git_status_preview.py')"
+  $env:FZF_PACKAGE_PREVIEW_CMD ??= "python $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_package_preview.py')"
 }
 elseif (Get-Command 'python3' -ErrorAction SilentlyContinue) {
   $env:FZF_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_preview.py')"
@@ -22,6 +23,7 @@ elseif (Get-Command 'python3' -ErrorAction SilentlyContinue) {
   $env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_git_commit_preview.py')"
   $env:FZF_GIT_LOG_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_git_commit_preview.py')"
   $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_git_status_preview.py')"
+  $env:FZF_PACKAGE_PREVIEW_CMD ??= "python3 $(Join-Path $SCRIPT_DIR 'previewers\python\fzf_package_preview.py')"
 }
 else {
   $env:FZF_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR 'previewers\fzf_preview.ps1')"
@@ -29,23 +31,23 @@ else {
   $env:FZF_GIT_COMMIT_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR 'previewers\fzf_git_commit_preview.ps1')"
   $env:FZF_GIT_LOG_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR 'previewers\fzf_git_log_preview.ps1')"
   $env:FZF_GIT_STATUS_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR 'previewers\fzf_git_status_preview.ps1')"
+  $env:FZF_PACKAGE_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR 'previewers\fzf_package_preview.ps1')"
 }
-#$env:FZF_PACKAGE_PREVIEW_CMD ??= "pwsh $(Join-Path $SCRIPT_DIR "previewers\fzf_package_preview.ps1")"
 
 # Set up diff preview command with delta if available
 if (Get-Command 'delta' -ErrorAction SilentlyContinue) {
   $env:FZF_DIFF_PREVIEW_CMD ??= 'delta --paging never'
 }
 
-# Source all widget functions
-. "$SCRIPT_DIR\widgets\fzf-file-widget.ps1"
-. "$SCRIPT_DIR\widgets\fzf-history-widget.ps1"
-. "$SCRIPT_DIR\widgets\fzf-cd-widget.ps1"
-. "$SCRIPT_DIR\widgets\fzf-git-log-widget.ps1"
-. "$SCRIPT_DIR\widgets\fzf-git-status-widget.ps1"
-. "$SCRIPT_DIR\widgets\fzf-variables-widget.ps1"
-#. "$SCRIPT_DIR\widgets\fzf-package-widget.ps1"
-. "$SCRIPT_DIR\widgets\fzf-git-blame-widget.ps1"
+# Source all widget functions - using Join-Path for cross-platform compatibility
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-file-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-history-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-cd-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-git-log-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-git-status-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-variables-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-package-widget.ps1')
+. (Join-Path $SCRIPT_DIR 'widgets' 'fzf-git-blame-widget.ps1')
 
 # PSReadLine key binding function
 function Set-PsFzfKeyBindings {
@@ -122,8 +124,10 @@ function Set-PsFzfKeyBindings {
     Invoke-FzfVariablesWidget
   } -Description 'FZF environment variables'
   
-  # Package widget (Alt+Ctrl+P)
-  #Set-PsFzfShortcut -Key "Alt+Ctrl+p" -ScriptBlock {Invoke-FzfPackageWidget} -Description "FZF package search"
+  # Package widget (Alt+P)
+  Set-PsFzfShortcut -Key 'Alt+p' -ScriptBlock {
+    Invoke-FzfPackageWidget
+  } -Description 'FZF package search'
   
   # Git blame widget (Alt+b)
   #Set-PsFzfShortcut -Key 'Alt+b' -ScriptBlock {
@@ -139,7 +143,7 @@ Invoke-FzfCdWidget,
 Invoke-FzfGitLogWidget, 
 Invoke-FzfGitStatusWidget, 
 Invoke-FzfVariablesWidget, 
-#Invoke-FzfPackageWidget, 
+Invoke-FzfPackageWidget, 
 Invoke-FzfGitBlameWidget,
 Find-FzfFiles
 
