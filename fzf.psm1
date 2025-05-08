@@ -1,6 +1,27 @@
 # PowerShell module for FZF
 # Port of the fzf.zsh plugin
 
+if (-not (Get-Command 'fzf' -ErrorAction SilentlyContinue)) {
+  if ($IsWindows) {
+    try {
+      Write-Host 'Installing fzf using winget...'
+      winget install fzf 2>&1
+      if ($LASTEXITCODE -ne 0) {
+        throw "Winget installation failed with exit code $LASTEXITCODE"
+      }
+    }
+    catch {
+      Write-Warning "Failed to install fzf using winget: $_"
+      Write-Warning 'Please install fzf manually from https://github.com/junegunn/fzf'
+      return
+    }
+  }
+  else {
+    Write-Warning 'fzf is not installed. Please install it from https://github.com/junegunn/fzf'
+    return
+  }
+}
+
 # Get the module directory
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
