@@ -37,6 +37,4 @@ function Invoke-FzfGitStatusWidget {
     # Insert the file paths
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert($filesToInsert)
   }
-  
-  [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }

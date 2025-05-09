@@ -340,9 +340,6 @@ function Invoke-FzfPackageWidget {
         [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
         [Microsoft.PowerShell.PSConsoleReadLine]::Insert($line)
       }
-      finally {
-        [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-      }
     }
   }
 }

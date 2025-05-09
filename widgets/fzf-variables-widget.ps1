@@ -27,6 +27,4 @@ function Invoke-FzfVariablesWidget {
     # Insert the variable name
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert("`$$selectedVariable")
   }
-  
-  [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }

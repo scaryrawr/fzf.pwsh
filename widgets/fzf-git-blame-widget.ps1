@@ -45,6 +45,4 @@ function Invoke-FzfGitBlameWidget {
         $selectedBlame = $selectedBlame -split '\s+' | Select-Object -First 1
         [Microsoft.PowerShell.PSConsoleReadLine]::Insert("${selectedBlame}")
     }
-    
-    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
