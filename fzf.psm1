@@ -115,13 +115,7 @@ function Set-PsFzfKeyBindings {
   Set-PsFzfShortcut -Key 'Ctrl+r' -ScriptBlock { 
     Invoke-FzfHistoryWidget
   } -Description 'FZF history reverse search'
-  Set-PsFzfShortcut -Key 'UpArrow' -ScriptBlock { 
-    Invoke-FzfHistoryWidget
-  } -Description 'FZF history search'
   Set-PsFzfShortcut -Key 'Ctrl+s' -ScriptBlock { 
-    Invoke-FzfHistoryWidget -ForwardSearch
-  } -Description 'FZF history forward search'
-  Set-PsFzfShortcut -Key 'DownArrow' -ScriptBlock { 
     Invoke-FzfHistoryWidget -ForwardSearch
   } -Description 'FZF history forward search'
   
