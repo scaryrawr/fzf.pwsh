@@ -2,24 +2,17 @@
 # Port of the fzf.zsh plugin
 
 if (-not (Get-Command 'fzf' -ErrorAction SilentlyContinue)) {
+  Write-Warning 'fzf is not installed. This module requires fzf to function.'
   if ($IsWindows) {
-    try {
-      Write-Host 'Installing fzf using winget...'
-      winget install fzf 2>&1
-      if ($LASTEXITCODE -ne 0) {
-        throw "Winget installation failed with exit code $LASTEXITCODE"
-      }
-    }
-    catch {
-      Write-Warning "Failed to install fzf using winget: $_"
-      Write-Warning 'Please install fzf manually from https://github.com/junegunn/fzf'
-      return
-    }
+    Write-Warning 'Install fzf using: winget install fzf'
+  }
+  elseif ($IsMacOS) {
+    Write-Warning 'Install fzf using: brew install fzf'
   }
   else {
-    Write-Warning 'fzf is not installed. Please install it from https://github.com/junegunn/fzf'
-    return
+    Write-Warning 'Install fzf using your package manager or from: https://github.com/junegunn/fzf'
   }
+  return
 }
 
 # Get the module directory
