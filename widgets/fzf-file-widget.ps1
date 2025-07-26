@@ -12,19 +12,28 @@ function Find-FzfFiles {
       try {
         $gitFiles = (git ls-files --others --ignored --exclude-standard --directory) -join "`n"
         Get-ChildItem -File -Recurse -Force | Where-Object {
-          $_.FullName -notmatch '\.git\\' -and
+          $_.FullName -notmatch "\.git$([regex]::Escape([System.IO.Path]::DirectorySeparatorChar))" -and
           $gitFiles -notcontains $_.FullName
-        } | ForEach-Object { $_.FullName.Replace("$pwd\", '') }
+        } | ForEach-Object { 
+          # Use cross-platform relative path calculation
+          [System.IO.Path]::GetRelativePath($PWD.Path, $_.FullName)
+        }
       }
       catch {
-        Get-ChildItem -File -Recurse -Force | Where-Object { $_.FullName -notmatch '\.git\\' } | 
-        ForEach-Object { $_.FullName.Replace("$pwd\", '') }
+        Get-ChildItem -File -Recurse -Force | Where-Object { 
+          $_.FullName -notmatch "\.git$([regex]::Escape([System.IO.Path]::DirectorySeparatorChar))"
+        } | ForEach-Object { 
+          [System.IO.Path]::GetRelativePath($PWD.Path, $_.FullName)
+        }
       }
     }
     else {
       # Not in git repo, just get all files
-      Get-ChildItem -File -Recurse -Force | Where-Object { $_.FullName -notmatch '\.git\\' } | 
-      ForEach-Object { $_.FullName.Replace("$pwd\", '') }
+      Get-ChildItem -File -Recurse -Force | Where-Object { 
+        $_.FullName -notmatch "\.git$([regex]::Escape([System.IO.Path]::DirectorySeparatorChar))"
+      } | ForEach-Object { 
+        [System.IO.Path]::GetRelativePath($PWD.Path, $_.FullName)
+      }
     }
   }
 }

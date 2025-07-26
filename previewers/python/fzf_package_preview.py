@@ -39,7 +39,10 @@ def main():
         fzf_preview_cmd = os.environ.get("FZF_PREVIEW_CMD")
         if fzf_preview_cmd:
             try:
-                subprocess.run(f"{fzf_preview_cmd} {location}", shell=True)
+                # Properly quote the location path to handle spaces and special characters
+                import shlex
+                quoted_location = shlex.quote(location)
+                subprocess.run(f"{fzf_preview_cmd} {quoted_location}", shell=True)
             except subprocess.SubprocessError as e:
                 print(f"Error previewing file: {e}")
         else:

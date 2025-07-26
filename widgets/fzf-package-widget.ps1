@@ -54,8 +54,9 @@ function Get-PackageHash
             try
             {
                 $packageJsonFiles = Get-ChildItem -Path '.' -Filter 'package.json' -Recurse |
-                    Select-Object -ExpandProperty FullName |
-                    ForEach-Object { $_.Replace($PWD.Path, '').TrimStart('/\') }
+                    ForEach-Object { 
+                        [System.IO.Path]::GetRelativePath($PWD.Path, $_.FullName)
+                    }
 
                 if ($packageJsonFiles)
                 {
@@ -99,8 +100,9 @@ function Get-PackageHash
             try
             {
                 $cargoFiles = Get-ChildItem -Path '.' -Filter 'Cargo.toml' -Recurse |
-                    Select-Object -ExpandProperty FullName |
-                    ForEach-Object { $_.Replace($PWD.Path, '').TrimStart('/\') }
+                    ForEach-Object { 
+                        [System.IO.Path]::GetRelativePath($PWD.Path, $_.FullName)
+                    }
 
                 if ($cargoFiles)
                 {
@@ -157,22 +159,22 @@ function Invoke-FzfPackageWidget
         }
     }
 
-    # Create safe directory and cache paths
-    $safeDirName = $PWD.Path -replace '[\\\/]', '_'
+    # Create safe directory name for cache (replace path separators with safe characters)
+    $safeDirName = $PWD.Path -replace '[\\/:]', '_'
 
-    # Use platform-appropriate temp directory
-    $tempBase = if ($env:TEMP)
-    {
+    # Use cross-platform temp directory detection
+    $tempBase = if ($env:TEMP -and (Test-Path $env:TEMP)) {
         # Windows
         $env:TEMP
-    } elseif ($env:TMPDIR)
-    {
-        # macOS/Linux
-        $env:TMPDIR
-    } else
-    {
-        # Fallback
+    } elseif ($env:TMPDIR -and (Test-Path $env:TMPDIR)) {
+        # macOS/Linux with TMPDIR set
+        $env:TMPDIR.TrimEnd('/')
+    } elseif (Test-Path '/tmp') {
+        # Unix/Linux standard temp
         '/tmp'
+    } else {
+        # Fallback to current directory
+        $PWD.Path
     }
 
     $cacheDir = Join-Path $tempBase 'fzf.pwsh' $safeDirName
@@ -329,12 +331,32 @@ function Invoke-FzfPackageWidget
                             $cargoPackages = $cargoInfo.packages |
                                 Where-Object { $_.id -like 'path+file*' } |
                                 ForEach-Object {
-                                    # Normalize path - on Windows manifest paths might need cleaning
+                                    # Handle manifest path cross-platform
                                     $manifestPath = $_.manifest_path
-                                    if ($IsWindows)
-                                    {
-                                        # Remove leading file:/// if present and normalize slashes
-                                        $manifestPath = $manifestPath -replace '^file:///', 'C:/' -replace '/', '\'
+                                    
+                                    # Handle file:// URIs properly
+                                    if ($manifestPath -match '^file://') {
+                                        try {
+                                            $uri = [System.Uri]$manifestPath
+                                            $manifestPath = $uri.LocalPath
+                                        }
+                                        catch {
+                                            # Fallback: remove file:// prefix and normalize
+                                            $manifestPath = $manifestPath -replace '^file://', ''
+                                            if ($IsWindows -and $manifestPath -match '^/[A-Za-z]:') {
+                                                # Windows: /C:/path -> C:/path
+                                                $manifestPath = $manifestPath.Substring(1)
+                                            }
+                                        }
+                                    }
+
+                                    # Convert to relative path from current directory
+                                    try {
+                                        $manifestPath = [System.IO.Path]::GetRelativePath($PWD.Path, $manifestPath)
+                                    }
+                                    catch {
+                                        # If relative path fails, use as-is
+                                        Write-Verbose "Could not convert to relative path: $manifestPath"
                                     }
 
                                     [PSCustomObject]@{
@@ -373,13 +395,12 @@ function Invoke-FzfPackageWidget
     $packageNames = $packagesInfo | ForEach-Object { $_.name } | Select-Object -Unique
     if ($packageNames)
     {
-        # For cross-platform compatibility, ensure the path is properly quoted
-        # Our preview commands now handle both parameters explicitly
-        $escapedCacheFile = $cacheFile -replace '"', '\"'
+        # For cross-platform compatibility, ensure the cache file path is properly quoted
+        $quotedCacheFile = "`"$cacheFile`""
 
         # Use Out-String -Stream to ensure proper line handling on all platforms
         $selectedPackages = $packageNames | Out-String -Stream |
-            fzf --height 60% --prompt="Select package(s): " --preview "$env:FZF_PACKAGE_PREVIEW_CMD {} $escapedCacheFile" --query="$hint" --multi
+            fzf --height 60% --prompt="Select package(s): " --preview "$env:FZF_PACKAGE_PREVIEW_CMD {} $quotedCacheFile" --query="$hint" --multi
 
         if ($selectedPackages)
         {

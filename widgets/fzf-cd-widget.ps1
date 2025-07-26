@@ -10,8 +10,11 @@ function Invoke-FzfCdWidget {
       fd --type directory --color=always
     }
     else {
-      Get-ChildItem -Directory -Recurse -Force | Where-Object { $_.FullName -notmatch '\.git\\' } | 
-      ForEach-Object { $_.FullName.Replace("$pwd\", '') }
+      Get-ChildItem -Directory -Recurse -Force | Where-Object { 
+        $_.FullName -notmatch "\.git$([regex]::Escape([System.IO.Path]::DirectorySeparatorChar))"
+      } | ForEach-Object { 
+        [System.IO.Path]::GetRelativePath($PWD.Path, $_.FullName)
+      }
     }
   }
 
