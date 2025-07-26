@@ -91,6 +91,66 @@ The module supports PowerShell's standard `-Verbose` parameter for diagnostics. 
 
 When verbose mode is enabled, the widget functions will display additional information, such as notifications about not being in a git repository or when there are no changes in a git repository. When verbose mode is disabled (the default), these notifications will not appear, keeping your prompt clean.
 
+## Development and Testing
+
+### Quick Testing
+
+For rapid development validation:
+
+```powershell
+# Quick module test (loads module, checks functions, tests basic functionality)
+.\tests\Quick-Test.ps1
+
+# Validate test environment setup
+.\tests\Validate-TestSetup.ps1
+```
+
+### Full Test Suite
+
+The project includes comprehensive tests that run on Windows, Linux, and macOS:
+
+```powershell
+# Run all tests
+.\tests\Test-Runner.ps1
+
+# Run specific test suites
+.\tests\Test-Runner.ps1 -TestSuite Module
+.\tests\Test-Runner.ps1 -TestSuite Widgets
+.\tests\Test-Runner.ps1 -TestSuite Integration
+
+# Run in CI mode (exits with error code on failure)
+.\tests\Test-Runner.ps1 -CI
+```
+
+### Test Philosophy
+
+The tests focus on high-level functionality rather than internal implementation:
+
+- **Environment Variable Injection** - Ensuring preview commands are set correctly
+- **Cross-Platform Compatibility** - Path handling across Windows/Linux/macOS
+- **Widget Behavior** - Testing user-facing functionality
+- **Error Handling** - Graceful degradation when dependencies are missing
+- **Real-World Scenarios** - Testing in actual git repos and file systems
+
+### Prerequisites for Testing
+
+Required:
+
+- **Pester** - PowerShell testing framework (`Install-Module Pester`)
+- **PSReadLine** - For key binding functionality
+
+Optional (enhances test coverage):
+
+- **fzf** - Tests will skip fzf-dependent features if not available
+- **Python** - For testing Python preview script selection
+- **Git** - For git-related widget testing
+- **fd**, **bat**, **delta** - For enhanced tool integration testing
+
+### GitHub Workflows
+
+- **Tests** - Multi-platform testing on Windows, Ubuntu, macOS
+- **Code Quality** - PSScriptAnalyzer, manifest validation, import testing
+
 ## Credits
 
 This is a PowerShell port of the [fzf.zsh](https://github.com/scaryrawr/fzf.zsh) plugin mostly done by GitHub Copilot.

@@ -1,0 +1,108 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PowerShell (Ubuntu/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            # Install PowerShell on Ubuntu
+            wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+            sudo dpkg -i powershell_7.4.0-1.deb_amd64.deb || sudo apt-get install -f
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+            # Install PowerShell on macOS
+            brew install --cask powershell
+          fi
+
+      - name: Install fzf (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          try {
+            winget install fzf --accept-source-agreements --accept-package-agreements
+          } catch {
+            Write-Warning "Failed to install fzf via winget: $_"
+            # Try chocolatey as backup
+            if (Get-Command choco -ErrorAction SilentlyContinue) {
+              choco install fzf -y
+            } else {
+              Write-Warning "Could not install fzf. Some tests may be skipped."
+            }
+          }
+
+      - name: Install fzf (Ubuntu/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y fzf
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+            brew install fzf
+          fi
+
+      - name: Install Python (for preview scripts)
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install optional tools for enhanced testing
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            # Install fd, bat, delta for enhanced functionality tests
+            sudo apt-get install -y fd-find bat git-delta || true
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+            brew install fd bat git-delta || true
+          fi
+          # Windows tools will be tested if available, but not required
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          # Install Pester v5 for better testing experience
+          Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser -MinimumVersion 5.0
+
+      - name: Install PSReadLine
+        shell: pwsh
+        run: |
+          Install-Module -Name PSReadLine -Force -SkipPublisherCheck -Scope CurrentUser -AllowClobber
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          $testResult = .\tests\Test-Runner.ps1 -TestSuite "All" -CI -OutputFormat "NUnitXml" -OutputFile "TestResults-${{ matrix.os }}.xml"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults-${{ matrix.os }}.xml
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results (${{ matrix.os }})
+          path: TestResults-${{ matrix.os }}.xml
+          reporter: java-junit
+          fail-on-error: true

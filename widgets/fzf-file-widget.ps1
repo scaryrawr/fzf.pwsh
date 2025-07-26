@@ -3,7 +3,7 @@
 function Find-FzfFiles {
   # Try to use fd if available
   if (Get-Command 'fd' -ErrorAction SilentlyContinue) {
-    fd --type file --color=always
+    (fd --type file --color=always) -split "`n" | Where-Object { $_ -ne '' }
   }
   else {
     # Fall back to PowerShell
