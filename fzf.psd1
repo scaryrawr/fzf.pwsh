@@ -76,6 +76,7 @@
     'Invoke-FzfGitLogWidget', 
     'Invoke-FzfGitStatusWidget', 
     'Invoke-FzfVariablesWidget', 
+    'Invoke-FzfPackageWidget',
     'Invoke-FzfGitBlameWidget',
     'Find-FzfFiles'
   )
