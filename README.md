@@ -37,13 +37,14 @@ A PowerShell module that integrates [fzf](https://github.com/junegunn/fzf) (comm
 
 This module provides several widget functions that can be accessed through keyboard shortcuts:
 
-- **Ctrl+T** / **Alt+Ctrl+F**: File search
-- **Ctrl+R** / **Up Arrow**: Command history search
+- **Ctrl+T**: File search
+- **Ctrl+R**: Command history reverse search
+- **Ctrl+S**: Command history forward search
 - **Alt+C**: Change directory
-- **Alt+Ctrl+L**: Git log
-- **Alt+Ctrl+T** / **Alt+Ctrl+S**: Git status
+- **Alt+G**: Git log
+- **Alt+S**: Git status
 - **Alt+V**: Environment variables
-- **Alt+Ctrl+B**: Git blame
+- **Alt+P**: Package search
 
 ## Configuration
 
