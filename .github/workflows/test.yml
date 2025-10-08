@@ -92,7 +92,7 @@ jobs:
           $testResult = .\tests\Test-Runner.ps1 -TestSuite "All" -CI -OutputFormat "NUnitXml" -OutputFile "TestResults-${{ matrix.os }}.xml"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results-${{ matrix.os }}
