@@ -19,7 +19,7 @@ if (-not (Get-Command 'fzf' -ErrorAction SilentlyContinue)) {
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Set default options if not already set
-$env:FZF_DEFAULT_OPTS ??= '--ansi'
+$env:FZF_DEFAULT_OPTS ??= '--ansi --cycle --layout=reverse --border --height=90% --preview-window=wrap'
 
 # Initialize preview command variables
 
