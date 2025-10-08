@@ -19,6 +19,12 @@ A PowerShell module that integrates [fzf](https://github.com/junegunn/fzf) (comm
 
 ## Installation
 
+### PowerShell Gallery (Recommended)
+
+```powershell
+Install-Module -Name fzf.pwsh -Scope CurrentUser
+```
+
 ### Manual Installation
 
 1. Clone this repository:
@@ -37,36 +43,54 @@ A PowerShell module that integrates [fzf](https://github.com/junegunn/fzf) (comm
 
 This module provides several widget functions that can be accessed through keyboard shortcuts:
 
-- **Ctrl+T**: File search
-- **Ctrl+R**: Command history reverse search
-- **Ctrl+S**: Command history forward search
-- **Alt+C**: Change directory
-- **Alt+G**: Git log
-- **Alt+S**: Git status
-- **Alt+V**: Environment variables
-- **Alt+P**: Package search
+- **Ctrl+T**: File search - Find files in the current directory tree
+- **Ctrl+R**: Command history reverse search - Search backwards through command history
+- **Ctrl+S**: Command history forward search - Search forwards through command history
+- **Alt+C**: Change directory - Fuzzy find and change to a directory
+- **Alt+G**: Git log - Browse git commit history
+- **Alt+S**: Git status - View and select git modified files
+- **Alt+V**: Environment variables - Browse and search environment variables
+- **Alt+P**: Package search - Search for packages (winget on Windows, Homebrew on macOS, apt on Linux)
 
 ## Configuration
 
-You can customize the module by setting the following environment variables:
+You can customize the module by setting environment variables in your PowerShell profile:
 
 ```powershell
-$env:FZF_DEFAULT_OPTS = "--ansi"  # Default options for fzf
+# Default fzf options (set before importing the module or customize as needed)
+$env:FZF_DEFAULT_OPTS = "--ansi --cycle --layout=reverse --border --height=90% --preview-window=wrap"
 ```
+
+The module sets sensible defaults for `FZF_DEFAULT_OPTS` if not already configured.
 
 ## Custom Preview Commands
 
 You can customize the preview commands:
 
 ```powershell
+# File preview (used by Ctrl+T, Alt+C)
 $env:FZF_PREVIEW_CMD = "<custom-preview-command>"
+
+# Git blame preview (used by Alt+B - not currently bound)
 $env:FZF_GIT_BLAME_PREVIEW_CMD = "<custom-git-blame-preview-command>"
+
+# Git commit preview (used by Alt+G git log)
 $env:FZF_GIT_COMMIT_PREVIEW_CMD = "<custom-git-commit-preview-command>"
+
+# Git log preview (used by Alt+G)
 $env:FZF_GIT_LOG_PREVIEW_CMD = "<custom-git-log-preview-command>"
+
+# Git status preview (used by Alt+S)
 $env:FZF_GIT_STATUS_PREVIEW_CMD = "<custom-git-status-preview-command>"
+
+# Package preview (used by Alt+P)
 $env:FZF_PACKAGE_PREVIEW_CMD = "<custom-package-preview-command>"
+
+# Diff preview (used by git status - requires delta)
 $env:FZF_DIFF_PREVIEW_CMD = "<custom-diff-preview-command>"
 ```
+
+The module automatically selects Python preview scripts if Python is available (for better performance), otherwise falls back to PowerShell preview scripts.
 
 ## Verbose Output
 
@@ -91,66 +115,6 @@ The module supports PowerShell's standard `-Verbose` parameter for diagnostics. 
    ```
 
 When verbose mode is enabled, the widget functions will display additional information, such as notifications about not being in a git repository or when there are no changes in a git repository. When verbose mode is disabled (the default), these notifications will not appear, keeping your prompt clean.
-
-## Development and Testing
-
-### Quick Testing
-
-For rapid development validation:
-
-```powershell
-# Quick module test (loads module, checks functions, tests basic functionality)
-.\tests\Quick-Test.ps1
-
-# Validate test environment setup
-.\tests\Validate-TestSetup.ps1
-```
-
-### Full Test Suite
-
-The project includes comprehensive tests that run on Windows, Linux, and macOS:
-
-```powershell
-# Run all tests
-.\tests\Test-Runner.ps1
-
-# Run specific test suites
-.\tests\Test-Runner.ps1 -TestSuite Module
-.\tests\Test-Runner.ps1 -TestSuite Widgets
-.\tests\Test-Runner.ps1 -TestSuite Integration
-
-# Run in CI mode (exits with error code on failure)
-.\tests\Test-Runner.ps1 -CI
-```
-
-### Test Philosophy
-
-The tests focus on high-level functionality rather than internal implementation:
-
-- **Environment Variable Injection** - Ensuring preview commands are set correctly
-- **Cross-Platform Compatibility** - Path handling across Windows/Linux/macOS
-- **Widget Behavior** - Testing user-facing functionality
-- **Error Handling** - Graceful degradation when dependencies are missing
-- **Real-World Scenarios** - Testing in actual git repos and file systems
-
-### Prerequisites for Testing
-
-Required:
-
-- **Pester** - PowerShell testing framework (`Install-Module Pester`)
-- **PSReadLine** - For key binding functionality
-
-Optional (enhances test coverage):
-
-- **fzf** - Tests will skip fzf-dependent features if not available
-- **Python** - For testing Python preview script selection
-- **Git** - For git-related widget testing
-- **fd**, **bat**, **delta** - For enhanced tool integration testing
-
-### GitHub Workflows
-
-- **Tests** - Multi-platform testing on Windows, Ubuntu, macOS
-- **Code Quality** - PSScriptAnalyzer, manifest validation, import testing
 
 ## Credits
 
