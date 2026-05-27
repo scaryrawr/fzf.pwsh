@@ -5,7 +5,7 @@ PowerShell widgets and keybindings for [fzf](https://github.com/junegunn/fzf), b
 ## Prerequisites
 
 - [PowerShell](https://github.com/PowerShell/PowerShell) 5.1+
-- [fzf](https://github.com/junegunn/fzf) (required; the module warns and exits if missing)
+- [fzf](https://github.com/junegunn/fzf) (required; import shows a warning and stops loading the module if missing)
 - [PSReadLine](https://github.com/PowerShell/PSReadLine) (required for keybindings)
 
 ## Optional dependencies
@@ -36,7 +36,9 @@ git clone https://github.com/scaryrawr/fzf.pwsh.git "<your-module-path>/fzf.pwsh
 Import-Module fzf.pwsh
 ```
 
-> On import, `Set-PsFzfKeyBindings` is called automatically.
+## Usage
+
+On import, `Set-PsFzfKeyBindings` is called automatically.
 
 ## Default keybindings
 
