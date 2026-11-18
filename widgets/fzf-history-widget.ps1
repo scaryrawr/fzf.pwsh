@@ -11,19 +11,13 @@ function Invoke-FzfHistoryWidget {
   $cursor = $null
   [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
 
-  # Use PSReadLine's history as a source
-  $history = Get-Content (Get-PSReadLineOption).HistorySavePath -ErrorAction SilentlyContinue
+  $history = @(Get-Content (Get-PSReadLineOption).HistorySavePath -ErrorAction SilentlyContinue)
 
-  # Use the current line as the query
-  $query = $line
+  if (-not $ForwardSearch) {
+    [array]::Reverse($history)
+  }
 
-  # Run fzf to select command from history
-  if ($ForwardSearch) {
-    $selectedCommand = $history | fzf --height 60% --query="$query"
-  }
-  else {
-    $selectedCommand = $history | fzf --tac --height 60% --query="$query"
-  }
+  $selectedCommand = $history | Select-Object -Unique | fzf --height 60% --query="$line"
 
   # If a command was selected, replace the current line with it
   [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()

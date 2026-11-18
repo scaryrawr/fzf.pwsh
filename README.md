@@ -51,6 +51,8 @@ On import, `Set-PsFzfKeyBindings` is called automatically.
 - **Alt+V**: insert selected PowerShell variable name
 - **Alt+P**: select package/workspace names from local `package.json`/`Cargo.toml` data
 
+History search skips exact duplicates. Ctrl+R starts with the newest entry, and Ctrl+S starts with the oldest.
+
 `Invoke-FzfGitBlameWidget` is exported but **not** bound to a key by default.
 
 ## Exported functions
